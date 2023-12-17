@@ -40,6 +40,10 @@ async function handleSearch(event) {
     } else {
       hideButton();
     }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
     gallery.innerHTML = markup;
     lightbox.refresh();
     Notify.info(`Hooray! We found ${response.totalHits} images.`);
