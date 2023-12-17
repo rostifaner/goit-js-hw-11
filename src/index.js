@@ -11,13 +11,13 @@ loadMore.addEventListener('click', handleSearchMore);
 let currentRequest;
 let currentPage;
 let lightbox = new SimpleLightbox('.gallery a');
-
 async function handleSearch(event) {
   event.preventDefault();
   currentRequest = event.target.elements.searchQuery.value;
 
-  if (!currentRequest || currentRequest === ' ') {
+  if (!currentRequest || currentRequest.trim() === '') {
     Notify.failure('Please enter a name of image.');
+    searchField.reset();
     return;
   }
 
@@ -30,6 +30,8 @@ async function handleSearch(event) {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
+      gallery.innerHTML = '';
+      hideButton();
       return;
     }
 
@@ -40,13 +42,13 @@ async function handleSearch(event) {
     } else {
       hideButton();
     }
+    Notify.info(`Hooray! We found ${response.totalHits} images.`);
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
     gallery.innerHTML = markup;
     lightbox.refresh();
-    Notify.info(`Hooray! We found ${response.totalHits} images.`);
   } catch (error) {
     console.log('error', error);
   }
