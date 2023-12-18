@@ -1,3 +1,4 @@
+import { perPage } from './pixabay-api';
 import { fetchPhotos } from './pixabay-api';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
@@ -11,6 +12,7 @@ loadMore.addEventListener('click', handleSearchMore);
 let currentRequest;
 let currentPage;
 let lightbox = new SimpleLightbox('.gallery a');
+
 async function handleSearch(event) {
   event.preventDefault();
   currentRequest = event.target.elements.searchQuery.value;
@@ -20,9 +22,7 @@ async function handleSearch(event) {
     searchField.reset();
     return;
   }
-
   currentPage = 1;
-
   try {
     const response = await fetchPhotos(currentRequest);
 
@@ -34,14 +34,15 @@ async function handleSearch(event) {
       hideButton();
       return;
     }
-
     const markup = markupPhotos(response.hits);
 
     if (currentPage * response.hits.length < response.totalHits) {
       showButton();
     } else {
       hideButton();
+      Notify.info("We're sorry, but you've reached the end of search results.");
     }
+
     Notify.info(`Hooray! We found ${response.totalHits} images.`);
     window.scrollTo({
       top: 0,
@@ -55,16 +56,17 @@ async function handleSearch(event) {
 }
 
 async function handleSearchMore() {
-  currentPage += 1;
   try {
+    currentPage += 1;
     const response = await fetchPhotos(currentRequest, currentPage);
-
     const markup = markupPhotos(response.hits);
     gallery.insertAdjacentHTML('beforeend', markup);
-    if (currentPage * response.hits.length >= response.totalHits) {
+
+    if (response.hits.length < perPage) {
       hideButton();
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
+
     lightbox.refresh();
     smoothScroll();
   } catch (error) {

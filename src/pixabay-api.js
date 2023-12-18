@@ -2,7 +2,7 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 const API_KEY = '41264259-067abafdaae4a687f3d4190c8';
-
+export const perPage = 40;
 export async function fetchPhotos(request, page = 1) {
   const params = {
     method: 'GET',
@@ -13,7 +13,7 @@ export async function fetchPhotos(request, page = 1) {
       orientation: 'horizontal',
       safesearch: 'true',
       page: page,
-      per_page: '40',
+      per_page: perPage,
     },
   };
   try {
